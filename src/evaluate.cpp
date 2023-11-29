@@ -53,9 +53,9 @@ const unsigned int         gEmbeddedNNUESize    = 1;
 
 namespace Stockfish {
 
-int shufflinDamping[8] = {957, 952, 947, 943, 938, 933, 928, 924};
-int a = 200, b = 214;
-TUNE(shufflinDamping, a, b);
+int shufflingDamping[8] = {957, 952, 947, 943, 938, 933, 928, 924};
+int shufflingDamping100 = 479;
+TUNE(SetRange(0, 1024), shufflingDamping, shufflingDamping100);
 
 namespace Eval {
 
@@ -192,9 +192,9 @@ Value Eval::evaluate(const Position& pos) {
     // Damp down the evaluation when shuffling
     // Use a lookup table for the first 8 moves, then a linear model
     if (shuffling < 8) {
-        v = v * shufflinDamping[shuffling] / 256;
+        v = v * shufflingDamping[shuffling] / 1024;
     } else {
-        v = v * (a - shuffling) / b;
+        v = v * (shufflingDamping[8] + (shuffling - 8) * (shufflingDamping100 - shufflingDamping[8]) / (100 - 8)) / 1024;
     }
 
     // Guarantee evaluation does not hit the tablebase range
