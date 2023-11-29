@@ -53,6 +53,10 @@ const unsigned int         gEmbeddedNNUESize    = 1;
 
 namespace Stockfish {
 
+int shufflinDamping[8] = {957, 952, 947, 943, 938, 933, 928, 924};
+int a = 200, b = 214;
+TUNE(shufflinDamping, a, b);
+
 namespace Eval {
 
 std::string currentEvalFileName = "None";
@@ -185,8 +189,13 @@ Value Eval::evaluate(const Position& pos) {
         v       = (nnue * (915 + npm + 9 * pos.count<PAWN>()) + optimism * (154 + npm)) / 1024;
     }
 
-    // Damp down the evaluation linearly when shuffling
-    v = v * (200 - shuffling) / 214;
+    // Damp down the evaluation when shuffling
+    // Use a lookup table for the first 8 moves, then a linear model
+    if (shuffling < 8) {
+        v = v * shufflinDamping[shuffling] / 256;
+    } else {
+        v = v * (a - shuffling) / b;
+    }
 
     // Guarantee evaluation does not hit the tablebase range
     v = std::clamp(v, VALUE_TB_LOSS_IN_MAX_PLY + 1, VALUE_TB_WIN_IN_MAX_PLY - 1);
