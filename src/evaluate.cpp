@@ -194,7 +194,7 @@ Value Eval::evaluate(const Position& pos) {
     if (shuffling < 8) {
         v = v * shufflingDamping[shuffling] / 1024;
     } else {
-        v = v * (shufflingDamping[8] + (shuffling - 8) * (shufflingDamping100 - shufflingDamping[8]) / (100 - 8)) / 1024;
+        v = v * (shufflingDamping[7] + (shuffling - 7) * (shufflingDamping100 - shufflingDamping[7]) / (100 - 7)) / 1024;
     }
 
     // Guarantee evaluation does not hit the tablebase range
