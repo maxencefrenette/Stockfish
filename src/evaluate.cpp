@@ -55,7 +55,10 @@ namespace Stockfish {
 
 int shufflingDamping[8] = {957, 952, 947, 943, 938, 933, 928, 924};
 int shufflingDamping100 = 479;
-TUNE(SetRange(0, 1024), shufflingDamping, shufflingDamping100);
+
+auto myfunc = [](int m){return m == 0 ? std::pair<int, int>(0, 0) : std::pair<int, int>(m - 20, m + 20);};
+TUNE(SetRange(myfunc), shufflingDamping);
+TUNE(SetRange(450, 550), shufflingDamping100);
 
 namespace Eval {
 
