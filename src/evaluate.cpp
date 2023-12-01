@@ -53,6 +53,19 @@ const unsigned int         gEmbeddedNNUESize    = 1;
 
 namespace Stockfish {
 
+std::ofstream dataFile;
+std::random_device rd;
+std::mt19937 eng(rd());
+std::uniform_int_distribution<> distr(0, 100000);
+
+void initInstrumentation() {
+    dataFile.open("damping-data.csv", std::ios::app);
+    if (!dataFile.is_open()) {
+        std::cout << "Error opening file";
+        exit(1);
+    }
+}
+
 namespace Eval {
 
 std::string currentEvalFileName = "None";
@@ -184,6 +197,9 @@ Value Eval::evaluate(const Position& pos) {
         int npm = pos.non_pawn_material() / 64;
         v       = (nnue * (915 + npm + 9 * pos.count<PAWN>()) + optimism * (154 + npm)) / 1024;
     }
+
+    if (distr(eng) == 0)
+        dataFile << pos.fen() << "," << v << "," << shuffling << "," << pos.non_pawn_material() << "," << pos.count<PAWN>() << "\n";
 
     // Damp down the evaluation linearly when shuffling
     v = v * (200 - shuffling) / 214;

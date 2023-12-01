@@ -20,10 +20,19 @@
 #define EVALUATE_H_INCLUDED
 
 #include <string>
+#include <random>
+#include <fstream>
+#include <iostream>
 
 #include "types.h"
 
 namespace Stockfish {
+
+extern std::ofstream dataFile;
+extern std::mt19937 eng;
+extern std::uniform_int_distribution<> distr;
+
+void initInstrumentation();
 
 class Position;
 

@@ -32,6 +32,7 @@
 using namespace Stockfish;
 
 int main(int argc, char* argv[]) {
+    initInstrumentation();
 
     std::cout << engine_info() << std::endl;
 
