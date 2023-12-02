@@ -56,10 +56,10 @@ namespace Stockfish {
 std::ofstream dataFile;
 std::random_device rd;
 std::mt19937 eng(rd());
-std::uniform_int_distribution<> distr(0, 100000);
+std::uniform_int_distribution<> distr(0, 1000000);
 
 void initInstrumentation() {
-    dataFile.open("damping-data.csv", std::ios::app);
+    dataFile.open("C:\\Users\\maxen\\Repos\\Stockfish\\data-damping.csv", std::ios::app);
     if (!dataFile.is_open()) {
         std::cout << "Error opening file";
         exit(1);
@@ -198,8 +198,10 @@ Value Eval::evaluate(const Position& pos) {
         v       = (nnue * (915 + npm + 9 * pos.count<PAWN>()) + optimism * (154 + npm)) / 1024;
     }
 
-    if (distr(eng) == 0)
+    if (distr(eng) == 0) {
         dataFile << pos.fen() << "," << v << "," << shuffling << "," << pos.non_pawn_material() << "," << pos.count<PAWN>() << "\n";
+        dataFile.flush();
+    }
 
     // Damp down the evaluation linearly when shuffling
     v = v * (200 - shuffling) / 214;
